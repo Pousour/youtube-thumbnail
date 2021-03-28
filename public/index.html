@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraping</title>
+    <link rel="shortcut icon" href="#">
+
+    <!--Fonts-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet"> 
+    
+    <style>
+        html {
+            font-family: "Roboto";
+            margin: 0;
+        }
+        body {
+            background-color: black;
+            position: relative;
+            left: 50%;
+            transform: translate(-50%);
+            margin: 0;
+        }
+        #ensemble {
+            text-align: center;
+        }
+        form {
+            padding: 10px;
+            background-color: black;
+        }
+        img {
+            width: 12.5vw;
+            height: auto;
+            transition: 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.2, 1.2);
+        }
+    </style>
+</head>
+<body>
+    <form id="form">
+        <input type="text" value="" id="channelId" placeholder="Channel id ..." autofocus>
+        <input type="button" onclick="sendInfos()" value="Search" id="bouton">
+    </form>
+
+    
+
+    <script>
+        document.getElementById("channelId").addEventListener("sumbit", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        console.log(event.keyCode)
+            //if (event.keyCode === 13) {
+                event.preventDefault();
+                // Trigger the button element with a click
+                document.getElementById("bouton").click();
+            //}
+        }); 
+        async function sendInfos() {
+            var channelId = document.getElementById("channelId").value;
+            const data = {channelId};
+            console.log(data)
+            const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                }
+            const response = await fetch('/api', options);
+            const json = await response.json();
+            console.log(json);
+            setTimeout(() => location.reload(), 8000)
+        }
+
+        getData()
+        async function getData() {
+            const response = await fetch('/api');
+            const data = await response.json();
+            const divEnsemble = document.createElement('div');
+            divEnsemble.id = "ensemble";
+            divEnsemble.append(document.getElementById("form"))
+            for(item of data) {
+
+                const img = document.createElement("img");
+                img.id = "thumbnail";
+                img.src = `${item.img}`;
+
+                const a = document.createElement("a");
+                a.id = "link";
+                a.href = `${item.videolink}`
+
+
+                a.append(img)
+                divEnsemble.append(a);
+                document.body.append(divEnsemble);
+            }
+            console.log(data)
+        }
+    </script>
+</body>
+</html>
